@@ -1,0 +1,40 @@
+# Rider IDE
+.idea/
+*.sln.iml
+
+# Build artifacts
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ASP.NET
+wwwroot/node_modules/
+wwwroot/dist/
+
+# EF Core
+Migrations/
+
+# Database
+*.mdf
+*.ldf
+*.db
+
+# Vue frontend
+**/node_modules/
+**/dist/
+.env
+.env.*.local
+
+# System files
+.DS_Store
+Thumbs.db
