@@ -1,0 +1,11 @@
+C:\Users\limek\RiderProjects\mmes\Frontend\bin\Debug\net9.0\Frontend.deps.json
+C:\Users\limek\RiderProjects\mmes\Frontend\bin\Debug\net9.0\Frontend.dll
+C:\Users\limek\RiderProjects\mmes\Frontend\bin\Debug\net9.0\Frontend.pdb
+C:\Users\limek\RiderProjects\mmes\Frontend\obj\Debug\net9.0\Frontend.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\limek\RiderProjects\mmes\Frontend\obj\Debug\net9.0\Frontend.AssemblyInfoInputs.cache
+C:\Users\limek\RiderProjects\mmes\Frontend\obj\Debug\net9.0\Frontend.AssemblyInfo.cs
+C:\Users\limek\RiderProjects\mmes\Frontend\obj\Debug\net9.0\Frontend.csproj.CoreCompileInputs.cache
+C:\Users\limek\RiderProjects\mmes\Frontend\obj\Debug\net9.0\Frontend.dll
+C:\Users\limek\RiderProjects\mmes\Frontend\obj\Debug\net9.0\refint\Frontend.dll
+C:\Users\limek\RiderProjects\mmes\Frontend\obj\Debug\net9.0\Frontend.pdb
+C:\Users\limek\RiderProjects\mmes\Frontend\obj\Debug\net9.0\ref\Frontend.dll

@@ -1,0 +1,12 @@
+backend dla process, processparameters, parameters
+dodawanie,edycja,usuwanie,
+
+do order dodac liste procesow
+
+to przy wyświetlaniu order - przejście na procesy i tam wszystkie procesy dotyczące orderu i ich parametry
+
+datetime w process powinien byc automatycznie
+
+dodac na machinedetails i productdetails opcje edytowania
+
+czy powinno byc móc updatowac czas w procesie?

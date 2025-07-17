@@ -1,0 +1,31 @@
+# Rider / .NET
+.idea/
+*.sln.iml
+*.user
+*.suo
+*.csproj.user
+*.dbmdl
+*.log
+*.bak
+*.pdb
+bin/
+obj/
+artifacts/
+project.lock.json
+project.fragment.lock.json
+wwwroot/node_modules/
+wwwroot/dist/
+*.mdf
+*.ldf
+secrets.json
+
+# Vue
+**/node_modules/
+**/dist/
+.env
+.env.*.local
+
+# System
+.DS_Store
+Thumbs.db
+desktop.ini
