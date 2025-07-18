@@ -1,8 +1,7 @@
 using Application.DTOs;
-using Domain.Models;
-using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Application.Services;
+
 namespace Presentation.Controllers
 
 {
@@ -10,107 +9,77 @@ namespace Presentation.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly MiniProductionDbContext _context;
-
-        public ProductController(MiniProductionDbContext context)
+        private readonly IProductService _service;
+        public ProductController(IProductService service)
         {
-            _context = context;
+            _service = service;
         }
         
         [HttpPost]
         [Route("AddProduct")]
-        public IActionResult AddProduct([FromBody] CreateProductDto input)
+        public async Task<IActionResult> AddProduct([FromBody] CreateProductDto input)
         {
-            Product product = new Product()
+            if (await _service.Create(input))
             {
-                Name = input.Name,
-                Description = input.Description
+                return Ok("Success");
             };
-            
-            _context.Products.Add(product);
-            _context.SaveChanges();
-            return Ok($"added \"{product.Name}\"");
+            return BadRequest();
         }
-
+        
         [HttpGet]
         [Route("ShowProducts")]
-        public IActionResult ShowProducts()
+        public async Task<IActionResult> ShowProducts()
         {
-            if (!_context.Products.Any())
+            var products = await _service.List();
+
+            if (products.Count == 0)
             {
                 return NoContent();
             }
-            
-            var productsDtos = _context.Products
-                .Include(p=>p.Orders)
-                .Select(p => new ProductDto
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    OrderIds = p.Orders.Select(o=>o.Id).ToList()
-                }).ToList();
-            
-            return Ok(productsDtos);
+            return Ok(products);
+        }
+        
+        [HttpGet]
+        [Route("Details/{id}")]
+        public async Task<IActionResult> Details([FromRoute] int id)
+        {
+            var product = await _service.Details(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+        
+        
+        [HttpDelete]
+        [Route("DeleteProduct")]
+        public async Task<IActionResult> DeleteProduct([FromQuery] int id)
+        {
+            var isDeleted = await _service.Delete(id);
+            if (isDeleted)
+            {
+                return Ok("Success");
+            }
+            return BadRequest();
         }
         
         [HttpPut]
-        [Route("UpdateProducts")]
-        public IActionResult UpdateProduct([FromBody] CreateProductDto input, [FromQuery] int id)
+        [Route("UpdateProduct")]
+        public async Task<IActionResult> UpdateProduct([FromBody] CreateProductDto input, [FromQuery] int id)
         {
-            Product? productToUpdate = _context.Products.Find(id);
-            if(productToUpdate==null)
-            {
-                Console.WriteLine("Product with this id does not exist");
-                return NotFound();
-            }
-            
-            productToUpdate.Name = input.Name;
-            productToUpdate.Description = input.Description;
-            _context.Products.Update(productToUpdate);
-            _context.SaveChanges();
-            return Ok(productToUpdate);
-        }
-
-        [HttpDelete]
-        [Route("DeleteProduct")]
-        public IActionResult DeleteProduct([FromQuery] int id)
-        {
-            var product = _context.Products.Find(id);
-            if (product == null)
-            {
-                return NotFound("No such product");
-            }
-            _context.Products.Remove(product);
-            _context.SaveChanges();
-            return Ok("Product deleted");
-        }
-        [HttpGet]
-        [Route("Details/{id}")]
-        public IActionResult Details([FromRoute] int id)
-        {
-            var product = _context.Products
-                .Include(m => m.Orders)
-                .FirstOrDefault(m => m.Id == id);
-
+            var product = await _service.GetById(id);
             if (product == null)
             {
                 return NotFound();
             }
 
-            var productDto = new MachineDto
+            bool added = await _service.Update(id, input);
+            if (added)
             {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Orders = product.Orders.Select(o=> new OrderDto
-                {
-                    Id = o.Id,
-                    Code = o.Code,
-                }).ToList()
-            };
-
-            return Ok(productDto);
+                return Ok("Success");
+            }
+            return BadRequest("Failed to update product");
         }
     }
 }

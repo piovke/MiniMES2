@@ -19,6 +19,8 @@ public static class InfrastructureServiceRegistration
 
         services.AddScoped<IMachineRepository, MachineRepository>();
         services.AddScoped<IMachineService, MachineService>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IProductService, ProductService>();
         
         return services;
     }
