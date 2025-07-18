@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Domain.Models;
 
 
-namespace Infrastructure.Persistance;
+namespace Infrastructure.Persistence;
 
 public class MiniProductionDbContext : DbContext
 {

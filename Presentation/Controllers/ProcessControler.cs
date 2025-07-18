@@ -1,5 +1,5 @@
 using Application.DTOs;
-using Infrastructure.Persistance;
+using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Domain.Models;

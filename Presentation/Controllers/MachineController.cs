@@ -1,8 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Domain.Models;
 using Application.DTOs;
-using Infrastructure.Persistance;
+using Microsoft.AspNetCore.Mvc;
+using Application.Services;
 
 namespace Presentation.Controllers
 
@@ -11,114 +9,77 @@ namespace Presentation.Controllers
     [ApiController]
     public class MachineController : ControllerBase
     {
-        private readonly MiniProductionDbContext _context;
-        public MachineController(MiniProductionDbContext context)
+        private readonly IMachineService _service;
+        public MachineController(IMachineService service)
         {
-            _context = context;
+            _service = service;
         }
         
         [HttpPost]
         [Route("AddMachine")]
-        public IActionResult AddMachine([FromBody] CreateMachineDto input)
+        public async Task<IActionResult> AddMachine([FromBody] CreateMachineDto input)
         {
-            Domain.Models.Machine machine = new Domain.Models.Machine
+            if (await _service.Create(input))
             {
-                Name = input.Name,
-                Description = input.Description
+                return Ok("Success");
             };
-            
-            _context.Machines.Add(machine);
-            _context.SaveChanges();
-            return Ok($"added \"{machine.Name}\"");
+            return BadRequest();
         }
-
+        
         [HttpGet]
         [Route("ShowMachines")]
-        public IActionResult ShowMachines()
+        public async Task<IActionResult> ShowMachines()
         {
-            if (!_context.Machines.Any())
+            var machines = await _service.List();
+
+            if (machines.Count == 0)
             {
-                Console.WriteLine("No machines to show");
                 return NoContent();
             }
-            
-            var machines = _context.Machines
-                .Include(m=>m.Orders)
-                .Select(m => new MachineDto
-                {
-                    Id = m.Id,
-                    Name = m.Name,
-                    Description = m.Description,
-                    Orders = m.Orders.Select(o=>new OrderDto
-                    {
-                        Id = o.Id,
-                        Code = o.Code,
-                    }).ToList(),
-                }).ToList();
-            
             return Ok(machines);
         }
         
         [HttpGet]
         [Route("Details/{id}")]
-        public IActionResult Details([FromRoute] int id)
+        public async Task<IActionResult> Details([FromRoute] int id)
         {
-            var machine = _context.Machines
-                .Include(m => m.Orders)
-                .FirstOrDefault(m => m.Id == id);
-
+            var machine = await _service.Details(id);
             if (machine == null)
             {
                 return NotFound();
             }
-
-            var machineDto = new MachineDto
-            {
-                Id = machine.Id,
-                Name = machine.Name,
-                Description = machine.Description,
-                Orders = machine.Orders.Select(o=>new OrderDto
-                {
-                    Id = o.Id,
-                    Code = o.Code,
-                }).ToList()
-            };
-
-            return Ok(machineDto);
+            return Ok(machine);
         }
-
-
+        
+        
         [HttpDelete]
         [Route("DeleteMachine")]
-        public IActionResult DeleteMachine([FromQuery] int id)
+        public async Task<IActionResult> DeleteMachine([FromQuery] int id)
         {
-            var machine = _context.Machines.Find(id);
-            if (machine == null)
+            var isDeleted = await _service.Delete(id);
+            if (isDeleted)
             {
-                Console.WriteLine($"Machnie with id {id} not found");
-                return NotFound();
+                return Ok("Success");
             }
-            _context.Machines.Remove(machine);
-            _context.SaveChanges();
-            return Ok("deleted");
+            return BadRequest();
         }
-
+        
         [HttpPut]
         [Route("UpdateMachine")]
-        public IActionResult UpdateMachine([FromBody] CreateMachineDto input, [FromQuery] int id)
+        public async Task<IActionResult> UpdateMachine([FromBody] CreateMachineDto input, [FromQuery] int id)
         {
-            Domain.Models.Machine? machineToUpdate = _context.Machines.Find(id);
-            if(machineToUpdate==null)
+            var machine = await _service.GetById(id);
+            if (machine == null)
             {
-                Console.WriteLine("Machine with this id does not exist");
                 return NotFound();
             }
-            
-            machineToUpdate.Name = input.Name;
-            machineToUpdate.Description = input.Description;
-            _context.Machines.Update(machineToUpdate);
-            _context.SaveChanges();
-            return Ok(machineToUpdate);
+
+            bool added = await _service.Update(id, input);
+            if (added)
+            {
+                return Ok("Success");
+            }
+            return BadRequest("Failed to update machine");
         }
     }
 }

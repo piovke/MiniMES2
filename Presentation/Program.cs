@@ -1,9 +1,10 @@
+using Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Infrastructure.Persistance;
+using Infrastructure.Persistence;
 
 namespace Presentation
 {
@@ -39,6 +40,9 @@ namespace Presentation
             {
                 builder.Services.AddDbContext<MiniProductionDbContext>(options =>
                     options.UseMySql(connString, ServerVersion.AutoDetect(connString)));
+                
+                builder.Services.AddInfrastructure(builder.Configuration); //depndencyinjection
+
             }
 
             var app = builder.Build();

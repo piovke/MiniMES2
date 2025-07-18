@@ -1,6 +1,6 @@
 using Application.DTOs;
 using Domain.Models;
-using Infrastructure.Persistance;
+using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace Presentation.Controllers
