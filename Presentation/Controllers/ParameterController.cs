@@ -1,8 +1,6 @@
 using Application.DTOs;
-using Domain.Models;
-using Infrastructure.Persistence;
+using Application.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Presentation.Controllers
 
@@ -11,82 +9,47 @@ namespace Presentation.Controllers
     [ApiController]
     public class ParameterController : ControllerBase
     {
-        private readonly MiniProductionDbContext _context;
+        private readonly IParameterService _service;
 
-        public ParameterController(MiniProductionDbContext context)
+        public ParameterController(IParameterService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [HttpPost]
         [Route("AddParameter")]
-        public IActionResult AddParameter([FromBody] CreateParameterDto input)
+        public async Task<IActionResult> AddParameter([FromBody] CreateParameterDto input)
         {
-            if (input.Name.Length == 0 || input.Unit.Length == 0)
-            {
-                return BadRequest("name or unit not provided");
-            }
-            
-            Parameter parameter = new Parameter()
-            {
-                Name = input.Name,
-                Unit = input.Unit,
-            };
-            
-            _context.Parameters.Add(parameter);
-            _context.SaveChanges();
-            return Ok("added");
+           bool added = await _service.Create(input);
+           if (added) return Ok();
+           return BadRequest();
         }
 
         [HttpGet]
-        [Route("GetParameters")]
-        public IActionResult GetParameters()
+        [Route("ShowParameters")]
+        public async Task< IActionResult> ShowParameters()
         {
-            var parameters = _context.Parameters
-                .Include(p=>p.ProcessParameters)
-                .Select(parameter => new ParameterDto
-                {
-                    Id = parameter.Id,
-                    Name = parameter.Name,
-                    Unit = parameter.Unit,
-                }).ToList();
-
-            if (!parameters.Any())
-            {
-                return NoContent();
-            }
+            var parameters = await _service.List();
+            if (parameters.Count == 0) return NoContent();
             return Ok(parameters);
         }
 
         [HttpPut]
         [Route("UpdateParameter")]
-        public IActionResult UpdateParameter([FromQuery] int id, [FromBody] CreateParameterDto input)
+        public async Task< IActionResult> UpdateParameter([FromQuery] int id, [FromBody] CreateParameterDto input)
         {
-
-            Parameter? parameterToUpdate = _context.Parameters.Find(id);
-            if (parameterToUpdate == null)
-            {
-                return NotFound();
-            }
-            parameterToUpdate.Name = input.Name;
-            parameterToUpdate.Unit = input.Unit;
-            _context.Parameters.Update(parameterToUpdate);
-            _context.SaveChanges();
-            return Ok("updated");
+            bool updated = await _service.Update(id, input);
+            if (updated) return Ok();
+            return BadRequest();
         }
 
         [HttpDelete]
         [Route("DeleteParameter")]
-        public IActionResult DeleteParameter([FromQuery] int id)
+        public async Task< IActionResult> DeleteParameter([FromQuery] int id)
         {
-            Parameter? parameterToDelete = _context.Parameters.Find(id);
-            if (parameterToDelete == null)
-            {
-                return NotFound();
-            }
-            _context.Parameters.Remove(parameterToDelete);
-            _context.SaveChanges();
-            return Ok("deleted");
+            bool deleted = await _service.Delete(id);
+            if (deleted) return Ok();
+            return BadRequest();
         }
     }
 }
