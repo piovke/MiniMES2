@@ -15,4 +15,7 @@ public class CreateProcessDto
     public int SerialNumber { get; set; }
     public int OrderId { get; set; }
     public string Status { get; set; } = null!;
+    public DateTime DateTime { get; set; }
+
+    public List<CreateProcessParameterDto> ProcessParameters { get; set; } = new List<CreateProcessParameterDto>();
 }

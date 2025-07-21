@@ -25,6 +25,10 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IParameterRepository, ParameterRepository>();
         services.AddScoped<IParameterService, ParameterService>();
+        services.AddScoped<IProcessRepository, ProcessRepository>();
+        services.AddScoped<IProcessService, ProcessService>();
+        services.AddScoped<IProcessParameterRepository, ProcessParameterRepository>();
+        services.AddScoped<IProcessParametersService, ProcessParameterService>();
         
         return services;
     }

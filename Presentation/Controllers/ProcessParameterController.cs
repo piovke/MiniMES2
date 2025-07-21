@@ -22,25 +22,7 @@ namespace Presentation.Controllers
         [Route("AddProcessParameter")]
         public IActionResult AddProcessParameter([FromBody] CreateProcessParameterDto input)
         {
-            bool processExists = _context.Processes.Find(input.ProcessId) != null;
-            bool parameterExists = _context.Parameters.Find(input.ParameterId) != null;
-            
-            if  (!(parameterExists || processExists))
-            {
-                return BadRequest("parameter or process doesn't exist");
-            }
-            
-            ProcessParameters processParameter = new ProcessParameters
-            {
-                ProcessId = input.ProcessId,
-                ParameterId = input.ParameterId,
-                Value = input.Value
-            };
-
-
-            _context.ProcessParameters.Add(processParameter);
-            _context.SaveChanges();
-            return Ok("added");
+            return Ok();
         }
 
         [HttpGet]
@@ -72,16 +54,6 @@ namespace Presentation.Controllers
         [Route("UpdateProcessParameter")]
         public IActionResult UpdateProcessParameter([FromBody] CreateProcessParameterDto input, [FromQuery] int id)
         {
-            var processParameterToUpdate = _context.ProcessParameters.Find(id);
-            if (processParameterToUpdate == null)
-            {
-                return NotFound();
-            }
-            processParameterToUpdate.ProcessId = input.ProcessId;
-            processParameterToUpdate.ParameterId = input.ParameterId;
-            processParameterToUpdate.Value = input.Value;
-            _context.ProcessParameters.Update(processParameterToUpdate);
-            _context.SaveChanges();
             return Ok("Updated");
         }
 

@@ -11,6 +11,7 @@ public class ProcessParameterDto
 public class CreateProcessParameterDto
 {
     public int ProcessId { get; set; }
-    public int ParameterId { get; set; }
+    public CreateParameterDto Parameter { get; set; } = new CreateParameterDto();
     public int Value { get; set; }
 }
+

@@ -16,7 +16,11 @@ public class OrderRepository: IOrderRepository
     
     public async Task<List<Order>> List()
     {
-        return await _context.Orders.ToListAsync();
+        return await _context.Orders
+            .Include(m=>m.Machine)
+            .Include(p=>p.Product)
+            .Include(n=>n.Processes)
+            .ToListAsync();
     }
 
     public async Task<Order?> GetById(int id)
