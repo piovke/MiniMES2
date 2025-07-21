@@ -100,11 +100,7 @@ public class ProcessService : IProcessService
             ProcessParameters = processDto.ProcessParameters.Select(p=>new ProcessParameters
             {
                 Value = p.Value,
-                Parameter = new Parameter
-                {
-                    Name = p.Parameter.Name,
-                    Unit = p.Parameter.Unit
-                }
+                ParameterId = p.ParameterId
             }).ToList()
         };
         
