@@ -7,7 +7,7 @@ public class ProcessDto
     public string Status { get; set; } = "";
     public DateTime DateTime { get; set; }
     public OrderDto Order { get; set; } = new OrderDto(); 
-    public List<ProcessParameterDto> ProcessParameters = new List<ProcessParameterDto>();
+    public List<ProcessParameterDto> ProcessParameters {get;set;} = new List<ProcessParameterDto>();
 }
 
 public class CreateProcessDto
