@@ -22,11 +22,24 @@ namespace Presentation.Controllers
         [Route("AddProcess")]
         public async Task<IActionResult> AddProcess([FromBody] CreateProcessDto input)
         {
-            if (await _service.Create(input))
+            var response = await _service.Create(input);
+            if (response == "status should be OK or NOK")
             {
-                return Ok("added");
+                return BadRequest("status should be OK or NOK");
             }
-            return BadRequest("failed");
+            if(response=="date should be from the future")
+                return BadRequest("date should be from the future");
+
+            if (response == "failed to add")
+            {
+                return BadRequest("failed to add");
+            }
+            if(response =="order doesnt exist")
+            {
+                return BadRequest("order doesnt exist");
+            }
+
+            return Ok("added");
         }
 
         [HttpGet]

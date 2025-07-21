@@ -84,12 +84,24 @@ public class ProcessService : IProcessService
         return processDto;
     }
 
-    public async Task<bool> Create(CreateProcessDto processDto)
+    public async Task<string> Create(CreateProcessDto processDto)
     {
         if (!(processDto.Status == "OK" || processDto.Status == "NOK"))
         {
-            return false;
+            return "status should be OK or NOK";
         }
+
+        if (processDto.DateTime < DateTime.Now)
+        {
+            return "date should be from the future";
+        }
+
+        var orderExists = await _repository.OrderExist(processDto.OrderId);
+        if (!orderExists)
+        {
+            return "order doesnt exist";
+        }
+        
 
         var process = new Process
         {
@@ -104,7 +116,12 @@ public class ProcessService : IProcessService
             }).ToList()
         };
         
-        return await _repository.Create(process);
+        var response = await _repository.Create(process);
+        if (response)
+        {
+            return "added";
+        }
+        return "failed to add";
     }
 
     public async Task<bool> Update(int id, CreateProcessDto processDto)
@@ -133,5 +150,5 @@ public class ProcessService : IProcessService
         }
         return await _repository.Delete(processToDelete);
     }
-    
+
 }

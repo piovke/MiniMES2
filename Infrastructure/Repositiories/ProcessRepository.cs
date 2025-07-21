@@ -45,4 +45,15 @@ public class ProcessRepository : IProcessRepository
         _context.Processes.Remove(process);
         return await _context.SaveChangesAsync() > 0;
     }
+
+    public async Task<bool> OrderExist(int id)
+    {
+        var order = await _context.Orders.FindAsync(id);
+        if (order == null)
+        {
+            return false;
+        }
+
+        return true;
+    }
 }

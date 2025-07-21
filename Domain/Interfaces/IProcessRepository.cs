@@ -9,4 +9,5 @@ public interface IProcessRepository
     Task<bool> Create(Process process);
     Task<bool> Update(Process process);
     Task<bool> Delete(Process process);
+    Task<bool> OrderExist(int id);
 }
