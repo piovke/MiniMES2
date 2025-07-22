@@ -28,7 +28,7 @@ public class ProcessRepository : IProcessRepository
         return await _context.Processes.FindAsync(id);
     }
 
-    public async Task<bool> Create(Process process)
+    public async Task<bool> Create(Process process)//try catch i błąd do Result wysylac wyzej
     {
         await _context.Processes.AddAsync(process);
         return await _context.SaveChangesAsync() > 0;

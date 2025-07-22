@@ -59,7 +59,6 @@ namespace Presentation
             app.UseAuthorization();
 
             app.MapControllers();
-
             
             app.Run();
         }

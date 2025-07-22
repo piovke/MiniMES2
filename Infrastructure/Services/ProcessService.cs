@@ -1,3 +1,4 @@
+using Application;
 using Application.DTOs;
 using Application.Services;
 using Domain.Interfaces;
@@ -84,22 +85,27 @@ public class ProcessService : IProcessService
         return processDto;
     }
 
-    public async Task<string> Create(CreateProcessDto processDto)
+    public async Task<Result<Process?>> Create(CreateProcessDto processDto)
     {
+        var result = new Result<Process?>(false,"",null);  
+        
         if (!(processDto.Status == "OK" || processDto.Status == "NOK"))
         {
-            return "status should be OK or NOK";
+            result.Message = "Status should be OK or NOK";
+            return result;
         }
 
         if (processDto.DateTime < DateTime.Now)
         {
-            return "date should be from the future";
+            result.Message = "Time should be from the future";
+            return result;
         }
 
         var orderExists = await _repository.OrderExist(processDto.OrderId);
         if (!orderExists)
         {
-            return "order doesnt exist";
+            result.Message = "order doesnt exist";
+            return result;
         }
         
 
@@ -119,9 +125,13 @@ public class ProcessService : IProcessService
         var response = await _repository.Create(process);
         if (response)
         {
-            return "added";
+            result.Success = true;
+            result.Message = "added";
+            result.Data = process;
+            return result;
         }
-        return "failed to add";
+        result.Message = "failed";
+        return result;
     }
 
     public async Task<bool> Update(int id, CreateProcessDto processDto)
